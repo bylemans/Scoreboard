@@ -16,7 +16,7 @@
     }
     html, body {
         height: 100%;
-        overflow: hidden; /* No scrollbars */
+        overflow: hidden;
     }
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -27,22 +27,40 @@
         align-items: center;
     }
 
-    /* Main container uses full viewport */
+    /* === HEADER BAR === */
+    header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 0 0 1rem 1rem;
+        padding: 0.6rem 1rem;
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: clamp(1.2rem, 2.5vw, 2rem);
+        font-weight: 700;
+        letter-spacing: 0.05em;
+    }
+
+    header img {
+        width: clamp(1.2rem, 3vw, 2rem);
+        height: auto;
+    }
+
     .container {
         width: 100%;
         max-width: 1000px;
         height: 100vh;
-        padding: 2vh 2vw;
+        padding: 1rem 2vw;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
-    }
-
-    h1 {
-        text-align: center;
-        font-size: clamp(1.2rem, 2.5vw, 2.5rem);
-        margin-bottom: 0.5vh;
     }
 
     .timer-section {
@@ -52,6 +70,7 @@
         padding: 1rem;
         text-align: center;
         width: 100%;
+        margin-top: 1rem;
     }
 
     .quarter {
@@ -201,7 +220,6 @@
         font-size: clamp(0.6rem, 1.2vw, 0.875rem);
     }
 
-    /* Compact responsive adjustments for phones */
     @media (max-width: 768px) {
         .teams {
             flex-direction: column;
@@ -218,8 +236,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Scoreboard</h1>
-        
+        <header>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg" alt="Soccer ball icon">
+            <h1>Scoreboard App</h1>
+        </header>
         <div class="timer-section">
             <div class="quarter">Quarter <span id="currentQuarter">1</span></div>
             <div class="timer" id="timer">15:00</div>
