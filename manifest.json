@@ -1,0 +1,15 @@
+{
+  "name": "Scoreboard APP",
+  "short_name": "Scoreboard",
+  "description": "A simple and interactive soccer scoreboard app.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#00b300",
+  "icons": [
+    {
+      "src": "icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+}
