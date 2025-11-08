@@ -3,7 +3,9 @@
   "short_name": "Scoreboard",
   "description": "A simple and interactive soccer scoreboard app.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0d1117",
   "theme_color": "#00b300",
   "icons": [
@@ -11,6 +13,13 @@
       "src": "APPicon.png",
       "sizes": "1024x1024",
       "type": "image/png"
+    },
+    {
+      "src": "icons/maskable-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
+
