@@ -8,8 +8,9 @@
   "theme_color": "#00b300",
   "icons": [
     {
-      "src": "icon-1024.png",
+      "src": "APPicon.png",
       "sizes": "1024x1024",
       "type": "image/png"
     }
 }
+
