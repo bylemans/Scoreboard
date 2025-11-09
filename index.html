@@ -200,57 +200,21 @@ color: rgba(255,255,255,0.5);
 font-size: 0.75rem;
 flex-shrink: 0;
 }
-.timer-with-ball {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.75rem;
-    position: relative;
-}
-
-.ball-icon {
-    width: 1.2rem;
-    height: 1.2rem;
-    flex-shrink: 0;
-    opacity: 0.9;
-    transition: opacity 0.3s, transform 0.3s;
-}
-
-.ball-icon svg {
-    width: 100%;
-    height: 100%;
-}
-
-.ball-icon.hidden {
-    opacity: 0;
-    transform: scale(0.6);
-}
-
-.ball-icon:not(.hidden) {
-    opacity: 1;
-    transform: scale(1);
-}
+</style>
 </head>
 <body>
 <div class="container">
 <h1>Scoreboard</h1>
 
 <div class="timer-section">
-    <div class="quarter">Quarter <span id="currentQuarter">1</span></div>
-
-    <div class="timer-with-ball">
-        <div id="leftBall" class="ball-icon hidden"></div>
-        <div class="timer" id="timer">15:00</div>
-        <div id="rightBall" class="ball-icon hidden"></div>
-    </div>
-
-    <div class="timer-controls">
-        <button class="play-pause" id="playPause">▶ Play</button>
-        <button class="reset-timer" id="resetTimer">↻ Reset</button>
-        <button class="next-quarter" id="nextQuarter">Next Quarter</button>
-    </div>
+<div class="quarter">Quarter <span id="currentQuarter">1</span></div>
+<div class="timer" id="timer">15:00</div>
+<div class="timer-controls">
+<button class="play-pause" id="playPause">▶ Play</button>
+<button class="reset-timer" id="resetTimer">↻ Reset</button>
+<button class="next-quarter" id="nextQuarter">Next Quarter</button>
 </div>
-
+</div>
 
 <div class="teams">
 <div class="team home">
@@ -349,24 +313,13 @@ document.getElementById('nextQuarter').disabled = currentQuarter === 3;
 }
 
 function renderQuarters(id, scores) {
-    const isHome = id === 'homeQuarters';
-    const container = document.getElementById(id);
-
-    container.innerHTML = scores.map((score, i) => {
-        // ⚽ Add ball in Q2 & Q4 for home, Q1 & Q3 for away
-        const hasBall = (isHome && (i === 1 || i === 3)) || (!isHome && (i === 0 || i === 2));
-        const ballIcon = hasBall
-            ? `<svg class="quarter-ball" width="10" height="10"><use href="#icon-ball"></use></svg>`
-            : '';
-        return `
-            <div class="quarter-box ${i === currentQuarter ? 'active' : ''}">
-                <div class="quarter-label">
-                    Q${i + 1} ${ballIcon}
-                </div>
-                <div class="quarter-score">${score}</div>
-            </div>
-        `;
-    }).join('');
+const container = document.getElementById(id);
+container.innerHTML = scores.map((score, i) => `
+               <div class="quarter-box ${i === currentQuarter ? 'active' : ''}">
+                   <div class="quarter-label">Q${i + 1}</div>
+                   <div class="quarter-score">${score}</div>
+               </div>
+           `).join('');
 }
 
 function addScore(team, points) {
@@ -468,38 +421,7 @@ if ('serviceWorker' in navigator) {
 navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gewogIGV2ZW50LndhaXRVbnRpbChzZWxmLnNraXBXYWl0aW5nKCkpOwp9KTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdhY3RpdmF0ZScsIGV2ZW50ID0+IHsKICBldmVudC53YWl0VW50aWwoc2VsZi5jbGllbnRzLmNsYWltKCkpOwp9KTs=');
 }
 
-updateDisplay(updateBallIndicator(););
-function updateBallIndicator() {
-    const leftBall = document.getElementById('leftBall');
-    const rightBall = document.getElementById('rightBall');
-    const ballSvg = `<svg><use href="#icon-ball"></use></svg>`;
-
-    leftBall.innerHTML = '';
-    rightBall.innerHTML = '';
-
-    // Home team starts Q2 & Q4 → left side
-    // Away team starts Q1 & Q3 → right side
-    if (currentQuarter === 0 || currentQuarter === 2) {
-        rightBall.innerHTML = ballSvg;
-        rightBall.classList.remove('hidden');
-        leftBall.classList.add('hidden');
-    } else if (currentQuarter === 1 || currentQuarter === 3) {
-        leftBall.innerHTML = ballSvg;
-        leftBall.classList.remove('hidden');
-        rightBall.classList.add('hidden');
-    } else {
-        leftBall.classList.add('hidden');
-        rightBall.classList.add('hidden');
-    }
-}
+updateDisplay();
 </script>
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-  <symbol id="icon-ball" viewBox="0 0 24 24" fill="currentColor">
-    <circle cx="12" cy="12" r="10" fill="white"/>
-    <path d="M12 2a10 10 0 0 0-3 0.5l1 3 2 1 2-1 1-3A10 10 0 0 0 12 2zm0 8-2-1-2 1v3l2 1 2-1 2 1 2-1v-3l-2-1-2 1zm-8 2a8 8 0 0 1 2-5l-2 1v4zm16 0v-4l-2-1a8 8 0 0 1 2 5zm-8 10a8 8 0 0 1-6.93-4.04l2.93-1.46 4 2 4-2 2.93 1.46A8 8 0 0 1 12 22z" fill="#000"/>
-  </symbol>
-</svg>
-
 </body>
 </html>
