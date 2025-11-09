@@ -7,239 +7,205 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Scoreboard</title>
-    <link rel="manifest" href="manifest.json">
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    html, body {
-        height: 100%;
-        overflow: hidden;
-    }
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* === HEADER BAR === */
-    header {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 0 0 1rem 1rem;
-        padding: 0.6rem 1rem;
-        text-align: center;
-    }
-
-    header h1 {
-        font-size: clamp(1.2rem, 2.5vw, 2rem);
-        font-weight: 700;
-        letter-spacing: 0.05em;
-    }
-
-    header img {
-        width: clamp(1.2rem, 3vw, 2rem);
-        height: auto;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 1000px;
-        height: 100vh;
-        padding: 1rem 2vw;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .timer-section {
-        background: rgba(0,0,0,0.4);
-        backdrop-filter: blur(10px);
-        border-radius: 1rem;
-        padding: 1rem;
-        text-align: center;
-        width: 100%;
-        margin-top: 1rem;
-    }
-
-    .quarter {
-        color: #9ca3af;
-        font-size: clamp(0.7rem, 1.2vw, 1rem);
-        margin-bottom: 0.5vh;
-    }
-
-    .timer {
-        font-size: clamp(2rem, 6vw, 4rem);
-        font-weight: bold;
-        font-family: 'Courier New', monospace;
-        margin-bottom: 1vh;
-    }
-
-    .timer-controls {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    button {
-        padding: 0.6em 1.2em;
-        border: none;
-        border-radius: 0.5rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-size: clamp(0.8rem, 1.5vw, 1rem);
-        color: white;
-    }
-
-    button:active {
-        transform: scale(0.95);
-    }
-
-    .play-pause { background: #16a34a; }
-    .play-pause:hover { background: #15803d; }
-    .reset-timer { background: #2563eb; }
-    .reset-timer:hover { background: #1d4ed8; }
-    .next-quarter { background: #9333ea; }
-    .next-quarter:hover { background: #7e22ce; }
-    .next-quarter:disabled { background: #4b5563; cursor: not-allowed; }
-
-    .teams {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        gap: 1rem;
-        flex: 1;
-        width: 100%;
-    }
-
-    .team {
-        flex: 1;
-        border-radius: 1rem;
-        padding: 1rem;
-        box-shadow: 0 10px 15px rgba(0,0,0,0.3);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .home { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
-    .away { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
-
-    .team-name {
-        width: 100%;
-        background: rgba(255,255,255,0.2);
-        border: 2px solid rgba(255,255,255,0.3);
-        color: white;
-        font-size: clamp(1rem, 2.5vw, 1.5rem);
-        font-weight: bold;
-        text-align: center;
-        padding: 0.25rem;
-        border-radius: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .team-score {
-        font-size: clamp(2rem, 5vw, 4rem);
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 1vh;
-    }
-
-    .quarters {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 0.25rem;
-        margin-bottom: 1vh;
-    }
-
-    .quarter-box {
-        background: rgba(255,255,255,0.1);
-        padding: 0.25rem;
-        border-radius: 0.5rem;
-        text-align: center;
-    }
-
-    .quarter-box.active {
-        background: rgba(255,255,255,0.3);
-    }
-
-    .quarter-label {
-        font-size: clamp(0.5rem, 1vw, 0.8rem);
-        color: rgba(255,255,255,0.7);
-    }
-
-    .quarter-score {
-        font-size: clamp(0.9rem, 1.8vw, 1.25rem);
-        font-weight: bold;
-    }
-
-    .score-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .score-btn {
-        flex: 1;
-        background: rgba(255,255,255,0.2);
-        padding: 0.5rem;
-        font-size: clamp(0.7rem, 1.4vw, 1rem);
-    }
-
-    .score-btn:hover {
-        background: rgba(255,255,255,0.3);
-    }
-
-    .reset-game {
-        width: 100%;
-        background: #16a34a;
-        padding: 0.8rem;
-        font-size: clamp(0.9rem, 1.6vw, 1.125rem);
-        margin-top: 0.5rem;
-    }
-
-    .reset-game:hover {
-        background: #15803d;
-    }
-
-    footer {
-        text-align: center;
-        color: rgba(255,255,255,0.5);
-        font-size: clamp(0.6rem, 1.2vw, 0.875rem);
-    }
-
-    @media (max-width: 768px) {
-        .teams {
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNjb3JlYm9hcmQiLAogICJzaG9ydF9uYW1lIjogIlNjb3JlYm9hcmQiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSTFNVEVPSUJ0zVnpGUWVDZGZRZ0k1bk5yWlhSamFFWGxiR3dnYm205bGNTZ1lURWdNRG9nTUM0d01EQXdJREF1TURBd01DQXlOUzR1TlRZd05TQXRNVEF1TlRNd09TZDBiM0lnYm05elpWY3Jad1lTWCtaZjFwL1dYOWFEMGpCeUQwdWNPOFNkT0FQZDlKVnRYcXJ5dVp0YUhEc25WdzVPM1V3YzBWd2R6RXdJSE4wYjJ0bExYZHBaSFJvT2pNeElITjBjbTlyWlMxc2FXNWxZMkZ3T2pac2FXNWxPMlpwYkd3NmNtZGlLREkxTlN3eU5UVXNNalUxS1NJdlBqd3ZjM1puUGc9PSIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
+            height: 100vh;
+            padding: 0.5rem;
+            color: white;
+            overflow: hidden;
+            display: flex;
             flex-direction: column;
-            height: auto;
         }
         .container {
-            padding: 1vh 3vw;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        h1::before {
+            content: '⚽';
+            font-size: 1.5rem;
+        }
+        .timer-section {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .quarter {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
         }
         .timer {
-            font-size: clamp(2rem, 10vw, 3rem);
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 0.5rem;
         }
-    }
-</style>
+        .timer-controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            color: white;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        .play-pause {
+            background: #16a34a;
+        }
+        .play-pause:hover {
+            background: #15803d;
+        }
+        .reset-timer {
+            background: #2563eb;
+        }
+        .reset-timer:hover {
+            background: #1d4ed8;
+        }
+        .next-quarter {
+            background: #9333ea;
+        }
+        .next-quarter:hover {
+            background: #7e22ce;
+        }
+        .next-quarter:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+        .teams {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex: 1;
+            min-height: 0;
+        }
+        .team {
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .home {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        }
+        .away {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+        .team-name {
+            width: 100%;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 0.4rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .team-score {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            flex-shrink: 0;
+        }
+        .quarters {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+            flex-shrink: 0;
+        }
+        .quarter-box {
+            background: rgba(255,255,255,0.1);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        .quarter-box.active {
+            background: rgba(255,255,255,0.3);
+        }
+        .quarter-label {
+            font-size: 0.625rem;
+            color: rgba(255,255,255,0.7);
+        }
+        .quarter-score {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .score-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+        .score-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            padding: 0.6rem;
+        }
+        .score-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .reset-game {
+            width: 100%;
+            background: #16a34a;
+            padding: 0.75rem;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .reset-game:hover {
+            background: #15803d;
+        }
+        .signature {
+            text-align: center;
+            margin-top: 0.25rem;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg" alt="Soccer ball icon">
-            <h1>Scoreboard App</h1>
-        </header>
+        <h1>Scoreboard</h1>
+        
         <div class="timer-section">
             <div class="quarter">Quarter <span id="currentQuarter">1</span></div>
             <div class="timer" id="timer">15:00</div>
@@ -274,17 +240,17 @@
 
         <button class="reset-game" id="resetGame">↻ Reset Game</button>
         
-        <div style="text-align: center; margin-top: 2rem; color: rgba(255,255,255,0.5); font-size: 0.875rem;">
-            tby.be
-        </div>
+        <div class="signature">tby.be</div>
     </div>
 
     <script>
         let homeScore = [0, 0, 0, 0];
         let awayScore = [0, 0, 0, 0];
         let currentQuarter = 0;
-        let time = 900;
+        let timeRemaining = 900;
         let isRunning = false;
+        let startTimestamp = null;
+        let pausedTime = 900;
         let timerInterval;
 
         function formatTime(seconds) {
@@ -293,8 +259,24 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
+        function updateTimer() {
+            if (isRunning && startTimestamp) {
+                const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+                timeRemaining = Math.max(0, pausedTime - elapsed);
+                
+                if (timeRemaining === 0) {
+                    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLaiTcIGWi77eefTRAMUKfj8LZjHAY4ktfyz3ksBS13yPDej0ILEVm16OyrWBUIQ5zd8sFuJAUuhM/z14k3CBlon+zln00QDFCn4/C2YxwGOJHX8s55LAUqd8jw3o9DCw9XtOjrq1kVCEKb3fLBbiQFLoTP89eJNwgZaJ/s5Z9NEAxQp+PwtmMcBjiR1/LOeSwGKHfI8N6PQgsPVrTo66tZFQhCm93ywW4kBS6Ez/PXiTcIGWif7OWfTRAMUKfj8LZjHAY4kdfyznksBCh3yPDej0ILD1a06OurWRUIQpvd8sFuJAUuhM/z14k3CBlpn+3ln00QDFCn4/C2YxwGOJHX8s55LAQpd8nw3o9CC');
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                    isRunning = false;
+                    document.getElementById('playPause').textContent = '▶ Play';
+                    clearInterval(timerInterval);
+                }
+                updateDisplay();
+            }
+        }
+
         function updateDisplay() {
-            document.getElementById('timer').textContent = formatTime(time);
+            document.getElementById('timer').textContent = formatTime(timeRemaining);
             document.getElementById('currentQuarter').textContent = currentQuarter + 1;
             document.getElementById('homeTotal').textContent = homeScore.reduce((a, b) => a + b, 0);
             document.getElementById('awayTotal').textContent = awayScore.reduce((a, b) => a + b, 0);
@@ -330,21 +312,12 @@
             
             if (isRunning) {
                 btn.textContent = '⏸ Pause';
-                timerInterval = setInterval(() => {
-                    if (time > 0) {
-                        time--;
-                        updateDisplay();
-                        if (time === 0) {
-                            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLaiTcIGWi77eefTRAMUKfj8LZjHAY4ktfyz3ksBS13yPDej0ILEVm16OyrWBUIQ5zd8sFuJAUuhM/z14k3CBlon+zln00QDFCn4/C2YxwGOJHX8s55LAUqd8jw3o9DCw9XtOjrq1kVCEKb3fLBbiQFLoTP89eJNwgZaJ/s5Z9NEAxQp+PwtmMcBjiR1/LOeSwGKHfI8N6PQgsPVrTo66tZFQhCm93ywW4kBS6Ez/PXiTcIGWif7OWfTRAMUKfj8LZjHAY4kdfyznksBCh3yPDej0ILD1a06OurWRUIQpvd8sFuJAUuhM/z14k3CBlpn+3ln00QDFCn4/C2YxwGOJHX8s55LAQpd8nw3o9CC');
-                            audio.play().catch(e => console.log('Audio play failed:', e));
-                            isRunning = false;
-                            btn.textContent = '▶ Play';
-                            clearInterval(timerInterval);
-                        }
-                    }
-                }, 1000);
+                startTimestamp = Date.now();
+                pausedTime = timeRemaining;
+                timerInterval = setInterval(updateTimer, 100);
             } else {
                 btn.textContent = '▶ Play';
+                pausedTime = timeRemaining;
                 clearInterval(timerInterval);
             }
         }
@@ -352,8 +325,10 @@
         document.getElementById('playPause').addEventListener('click', toggleTimer);
         
         document.getElementById('resetTimer').addEventListener('click', () => {
-            time = 900;
+            timeRemaining = 900;
+            pausedTime = 900;
             isRunning = false;
+            startTimestamp = null;
             clearInterval(timerInterval);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
@@ -362,8 +337,10 @@
         document.getElementById('nextQuarter').addEventListener('click', () => {
             if (currentQuarter < 3) {
                 currentQuarter++;
-                time = 900;
+                timeRemaining = 900;
+                pausedTime = 900;
                 isRunning = false;
+                startTimestamp = null;
                 clearInterval(timerInterval);
                 document.getElementById('playPause').textContent = '▶ Play';
                 updateDisplay();
@@ -374,11 +351,39 @@
             homeScore = [0, 0, 0, 0];
             awayScore = [0, 0, 0, 0];
             currentQuarter = 0;
-            time = 900;
+            timeRemaining = 900;
+            pausedTime = 900;
             isRunning = false;
+            startTimestamp = null;
             clearInterval(timerInterval);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
+        });
+
+        // Keep timer running when page becomes visible again
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && isRunning) {
+                updateTimer();
+            }
+        });
+
+        // Prevent screen from sleeping (if supported)
+        let wakeLock = null;
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) {
+                console.log('Wake Lock error:', err);
+            }
+        }
+
+        // Request wake lock when timer starts
+        document.getElementById('playPause').addEventListener('click', () => {
+            if (isRunning) {
+                requestWakeLock();
+            }
         });
 
         // Register service worker for PWA
