@@ -336,9 +336,11 @@
             const btn = document.getElementById('playPause');
             
             if (isRunning) {
+                initAudio(); // Initialize audio on user interaction
                 btn.textContent = '⏸ Pause';
                 startTimestamp = Date.now();
                 pausedTime = timeRemaining;
+                hasReachedZero = false;
                 timerInterval = setInterval(updateTimer, 100);
             } else {
                 btn.textContent = '▶ Play';
@@ -354,6 +356,7 @@
             pausedTime = 900;
             isRunning = false;
             startTimestamp = null;
+            hasReachedZero = false;
             clearInterval(timerInterval);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
@@ -366,6 +369,7 @@
                 pausedTime = 900;
                 isRunning = false;
                 startTimestamp = null;
+                hasReachedZero = false;
                 clearInterval(timerInterval);
                 document.getElementById('playPause').textContent = '▶ Play';
                 updateDisplay();
@@ -380,6 +384,7 @@
             pausedTime = 900;
             isRunning = false;
             startTimestamp = null;
+            hasReachedZero = false;
             clearInterval(timerInterval);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
