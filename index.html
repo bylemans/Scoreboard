@@ -342,10 +342,18 @@
                 pausedTime = timeRemaining;
                 hasReachedZero = false;
                 timerInterval = setInterval(updateTimer, 100);
+                
+                // Schedule alarm to go off exactly when timer reaches zero
+                scheduleAlarm(timeRemaining);
             } else {
                 btn.textContent = '▶ Play';
                 pausedTime = timeRemaining;
                 clearInterval(timerInterval);
+                
+                // Cancel scheduled alarm
+                if (alarmTimeout) {
+                    clearTimeout(alarmTimeout);
+                }
             }
         }
 
@@ -358,6 +366,7 @@
             startTimestamp = null;
             hasReachedZero = false;
             clearInterval(timerInterval);
+            if (alarmTimeout) clearTimeout(alarmTimeout);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
         });
@@ -371,6 +380,7 @@
                 startTimestamp = null;
                 hasReachedZero = false;
                 clearInterval(timerInterval);
+                if (alarmTimeout) clearTimeout(alarmTimeout);
                 document.getElementById('playPause').textContent = '▶ Play';
                 updateDisplay();
             }
@@ -386,6 +396,7 @@
             startTimestamp = null;
             hasReachedZero = false;
             clearInterval(timerInterval);
+            if (alarmTimeout) clearTimeout(alarmTimeout);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
         });
