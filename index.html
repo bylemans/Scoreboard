@@ -243,196 +243,153 @@
         <div class="signature">tby.be</div>
     </div>
 
-    <script>
-        let homeScore = [0, 0, 0, 0];
-        let awayScore = [0, 0, 0, 0];
-        let currentQuarter = 0;
-        let timeRemaining = 900;
-        let isRunning = false;
-        let startTimestamp = null;
-        let pausedTime = 900;
-        let timerInterval;
+<script>
+    let homeScore = [0, 0, 0, 0];
+    let awayScore = [0, 0, 0, 0];
+    let currentQuarter = 0;
+    let timeRemaining = 900;
+    let isRunning = false;
+    let startTimestamp = null;
+    let pausedTime = 900;
+    let timerInterval;
+    let alarmTimeout = null; // ✅ add this missing variable
 
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function playAlarm() {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            }, i * 600);
         }
+    }
 
-        function playAlarm() {
-            // Create audio context for alarm sound
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Create three beeps
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.value = 800; // Hz
-                    oscillator.type = 'sine';
-                    
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.5);
-                }, i * 600);
-            }
+    // ✅ Define dummy initAudio and scheduleAlarm to avoid breaking play button
+    function initAudio() {
+        try {
+            const a = new (window.AudioContext || window.webkitAudioContext)();
+            a.resume();
+        } catch (e) {
+            console.warn("Audio init skipped:", e);
         }
+    }
 
-        function updateTimer() {
-            if (isRunning && startTimestamp) {
-                const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
-                timeRemaining = Math.max(0, pausedTime - elapsed);
-                
-                if (timeRemaining === 0 && pausedTime > 0) {
-                    playAlarm();
-                    isRunning = false;
-                    pausedTime = 0;
-                    document.getElementById('playPause').textContent = '▶ Play';
-                    clearInterval(timerInterval);
-                }
-                updateDisplay();
-            }
-        }
+    function scheduleAlarm(seconds) {
+        if (alarmTimeout) clearTimeout(alarmTimeout);
+        alarmTimeout = setTimeout(playAlarm, seconds * 1000);
+    }
 
-        function updateDisplay() {
-            document.getElementById('timer').textContent = formatTime(timeRemaining);
-            document.getElementById('currentQuarter').textContent = currentQuarter + 1;
-            document.getElementById('homeTotal').textContent = homeScore.reduce((a, b) => a + b, 0);
-            document.getElementById('awayTotal').textContent = awayScore.reduce((a, b) => a + b, 0);
-            
-            renderQuarters('homeQuarters', homeScore);
-            renderQuarters('awayQuarters', awayScore);
-            
-            document.getElementById('nextQuarter').disabled = currentQuarter === 3;
-        }
-
-        function renderQuarters(id, scores) {
-            const container = document.getElementById(id);
-            container.innerHTML = scores.map((score, i) => `
-                <div class="quarter-box ${i === currentQuarter ? 'active' : ''}">
-                    <div class="quarter-label">Q${i + 1}</div>
-                    <div class="quarter-score">${score}</div>
-                </div>
-            `).join('');
-        }
-
-        function addScore(team, points) {
-            if (team === 'home') {
-                homeScore[currentQuarter] = Math.max(0, homeScore[currentQuarter] + points);
-            } else {
-                awayScore[currentQuarter] = Math.max(0, awayScore[currentQuarter] + points);
-            }
-            updateDisplay();
-        }
-
-        function toggleTimer() {
-            isRunning = !isRunning;
-            const btn = document.getElementById('playPause');
-            
-            if (isRunning) {
-                initAudio(); // Initialize audio on user interaction
-                btn.textContent = '⏸ Pause';
-                startTimestamp = Date.now();
-                pausedTime = timeRemaining;
-                hasReachedZero = false;
-                timerInterval = setInterval(updateTimer, 100);
-                
-                // Schedule alarm to go off exactly when timer reaches zero
-                scheduleAlarm(timeRemaining);
-            } else {
-                btn.textContent = '▶ Play';
-                pausedTime = timeRemaining;
-                clearInterval(timerInterval);
-                
-                // Cancel scheduled alarm
-                if (alarmTimeout) {
-                    clearTimeout(alarmTimeout);
-                }
-            }
-        }
-
-        document.getElementById('playPause').addEventListener('click', toggleTimer);
-        
-        document.getElementById('resetTimer').addEventListener('click', () => {
-            timeRemaining = 900;
-            pausedTime = 900;
-            isRunning = false;
-            startTimestamp = null;
-            hasReachedZero = false;
-            clearInterval(timerInterval);
-            if (alarmTimeout) clearTimeout(alarmTimeout);
-            document.getElementById('playPause').textContent = '▶ Play';
-            updateDisplay();
-        });
-
-        document.getElementById('nextQuarter').addEventListener('click', () => {
-            if (currentQuarter < 3) {
-                currentQuarter++;
-                timeRemaining = 900;
-                pausedTime = 900;
+    function updateTimer() {
+        if (isRunning && startTimestamp) {
+            const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+            timeRemaining = Math.max(0, pausedTime - elapsed);
+            if (timeRemaining === 0 && pausedTime > 0) {
+                playAlarm();
                 isRunning = false;
-                startTimestamp = null;
-                hasReachedZero = false;
-                clearInterval(timerInterval);
-                if (alarmTimeout) clearTimeout(alarmTimeout);
+                pausedTime = 0;
                 document.getElementById('playPause').textContent = '▶ Play';
-                updateDisplay();
+                clearInterval(timerInterval);
             }
-        });
+            updateDisplay();
+        }
+    }
 
-        document.getElementById('resetGame').addEventListener('click', () => {
-            homeScore = [0, 0, 0, 0];
-            awayScore = [0, 0, 0, 0];
-            currentQuarter = 0;
+    function updateDisplay() {
+        document.getElementById('timer').textContent = formatTime(timeRemaining);
+        document.getElementById('currentQuarter').textContent = currentQuarter + 1;
+        document.getElementById('homeTotal').textContent = homeScore.reduce((a, b) => a + b, 0);
+        document.getElementById('awayTotal').textContent = awayScore.reduce((a, b) => a + b, 0);
+        renderQuarters('homeQuarters', homeScore);
+        renderQuarters('awayQuarters', awayScore);
+        document.getElementById('nextQuarter').disabled = currentQuarter === 3;
+    }
+
+    function renderQuarters(id, scores) {
+        const container = document.getElementById(id);
+        container.innerHTML = scores.map((score, i) => `
+            <div class="quarter-box ${i === currentQuarter ? 'active' : ''}">
+                <div class="quarter-label">Q${i + 1}</div>
+                <div class="quarter-score">${score}</div>
+            </div>
+        `).join('');
+    }
+
+    function addScore(team, points) {
+        if (team === 'home') {
+            homeScore[currentQuarter] = Math.max(0, homeScore[currentQuarter] + points);
+        } else {
+            awayScore[currentQuarter] = Math.max(0, awayScore[currentQuarter] + points);
+        }
+        updateDisplay();
+    }
+
+    function toggleTimer() {
+        isRunning = !isRunning;
+        const btn = document.getElementById('playPause');
+        if (isRunning) {
+            initAudio();
+            btn.textContent = '⏸ Pause';
+            startTimestamp = Date.now();
+            pausedTime = timeRemaining;
+            timerInterval = setInterval(updateTimer, 100);
+            scheduleAlarm(timeRemaining);
+        } else {
+            btn.textContent = '▶ Play';
+            pausedTime = timeRemaining;
+            clearInterval(timerInterval);
+            if (alarmTimeout) clearTimeout(alarmTimeout);
+        }
+    }
+
+    document.getElementById('playPause').addEventListener('click', toggleTimer);
+    document.getElementById('resetTimer').addEventListener('click', () => {
+        timeRemaining = 900;
+        pausedTime = 900;
+        isRunning = false;
+        clearInterval(timerInterval);
+        if (alarmTimeout) clearTimeout(alarmTimeout);
+        document.getElementById('playPause').textContent = '▶ Play';
+        updateDisplay();
+    });
+    document.getElementById('nextQuarter').addEventListener('click', () => {
+        if (currentQuarter < 3) {
+            currentQuarter++;
             timeRemaining = 900;
             pausedTime = 900;
             isRunning = false;
-            startTimestamp = null;
-            hasReachedZero = false;
             clearInterval(timerInterval);
             if (alarmTimeout) clearTimeout(alarmTimeout);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
-        });
-
-        // Keep timer running when page becomes visible again
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && isRunning) {
-                updateTimer();
-            }
-        });
-
-        // Prevent screen from sleeping (if supported)
-        let wakeLock = null;
-        async function requestWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                }
-            } catch (err) {
-                console.log('Wake Lock error:', err);
-            }
         }
-
-        // Request wake lock when timer starts
-        document.getElementById('playPause').addEventListener('click', () => {
-            if (isRunning) {
-                requestWakeLock();
-            }
-        });
-
-        // Register service worker for PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gewogIGV2ZW50LndhaXRVbnRpbChzZWxmLnNraXBXYWl0aW5nKCkpOwp9KTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdhY3RpdmF0ZScsIGV2ZW50ID0+IHsKICBldmVudC53YWl0VW50aWwoc2VsZi5jbGllbnRzLmNsYWltKCkpOwp9KTs=');
-        }
-
+    });
+    document.getElementById('resetGame').addEventListener('click', () => {
+        homeScore = [0, 0, 0, 0];
+        awayScore = [0, 0, 0, 0];
+        currentQuarter = 0;
+        timeRemaining = 900;
+        pausedTime = 900;
+        isRunning = false;
+        clearInterval(timerInterval);
+        if (alarmTimeout) clearTimeout(alarmTimeout);
+        document.getElementById('playPause').textContent = '▶ Play';
         updateDisplay();
-    </script>
+    });
+
+    updateDisplay();
+</script>
 </body>
 </html>
