@@ -332,20 +332,34 @@
         }
 
         function toggleTimer() {
-            isRunning = !isRunning;
             const btn = document.getElementById('playPause');
             
             if (isRunning) {
+                // Pause the timer
+                isRunning = false;
+                btn.textContent = '▶ Play';
+                pausedTime = timeRemaining;
+                clearInterval(timerInterval);
+                
+                // Cancel scheduled alarm
+                if (alarmTimeout) {
+                    clearTimeout(alarmTimeout);
+                    alarmTimeout = null;
+                }
+            } else {
+                // Start the timer
+                isRunning = true;
                 initAudio(); // Initialize audio on user interaction
                 btn.textContent = '⏸ Pause';
                 startTimestamp = Date.now();
                 pausedTime = timeRemaining;
                 hasReachedZero = false;
                 timerInterval = setInterval(updateTimer, 100);
-            } else {
-                btn.textContent = '▶ Play';
-                pausedTime = timeRemaining;
-                clearInterval(timerInterval);
+                
+                // Schedule alarm to go off exactly when timer reaches zero
+                if (timeRemaining > 0) {
+                    scheduleAlarm(timeRemaining);
+                }
             }
         }
 
@@ -358,6 +372,7 @@
             startTimestamp = null;
             hasReachedZero = false;
             clearInterval(timerInterval);
+            if (alarmTimeout) clearTimeout(alarmTimeout);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
         });
@@ -371,6 +386,7 @@
                 startTimestamp = null;
                 hasReachedZero = false;
                 clearInterval(timerInterval);
+                if (alarmTimeout) clearTimeout(alarmTimeout);
                 document.getElementById('playPause').textContent = '▶ Play';
                 updateDisplay();
             }
@@ -386,6 +402,7 @@
             startTimestamp = null;
             hasReachedZero = false;
             clearInterval(timerInterval);
+            if (alarmTimeout) clearTimeout(alarmTimeout);
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
         });
