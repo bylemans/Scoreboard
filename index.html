@@ -200,6 +200,21 @@ color: rgba(255,255,255,0.5);
 font-size: 0.75rem;
 flex-shrink: 0;
 }
+.quarter-label {
+    font-size: 0.625rem;
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.quarter-ball {
+    width: 0.7rem;
+    height: 0.7rem;
+    flex-shrink: 0;
+    opacity: 0.9;
+}
 </style>
 </head>
 <body>
@@ -313,13 +328,24 @@ document.getElementById('nextQuarter').disabled = currentQuarter === 3;
 }
 
 function renderQuarters(id, scores) {
-const container = document.getElementById(id);
-container.innerHTML = scores.map((score, i) => `
-               <div class="quarter-box ${i === currentQuarter ? 'active' : ''}">
-                   <div class="quarter-label">Q${i + 1}</div>
-                   <div class="quarter-score">${score}</div>
-               </div>
-           `).join('');
+    const isHome = id === 'homeQuarters';
+    const container = document.getElementById(id);
+
+    container.innerHTML = scores.map((score, i) => {
+        // ⚽ Add ball in Q2 & Q4 for home, Q1 & Q3 for away
+        const hasBall = (isHome && (i === 1 || i === 3)) || (!isHome && (i === 0 || i === 2));
+        const ballIcon = hasBall
+            ? `<svg class="quarter-ball" width="10" height="10"><use href="#icon-ball"></use></svg>`
+            : '';
+        return `
+            <div class="quarter-box ${i === currentQuarter ? 'active' : ''}">
+                <div class="quarter-label">
+                    Q${i + 1} ${ballIcon}
+                </div>
+                <div class="quarter-score">${score}</div>
+            </div>
+        `;
+    }).join('');
 }
 
 function addScore(team, points) {
@@ -423,5 +449,13 @@ navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGR
 
 updateDisplay();
 </script>
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="icon-ball" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="12" cy="12" r="10" fill="white"/>
+    <path d="M12 2a10 10 0 0 0-3 0.5l1 3 2 1 2-1 1-3A10 10 0 0 0 12 2zm0 8-2-1-2 1v3l2 1 2-1 2 1 2-1v-3l-2-1-2 1zm-8 2a8 8 0 0 1 2-5l-2 1v4zm16 0v-4l-2-1a8 8 0 0 1 2 5zm-8 10a8 8 0 0 1-6.93-4.04l2.93-1.46 4 2 4-2 2.93 1.46A8 8 0 0 1 12 22z" fill="#000"/>
+  </symbol>
+</svg>
+
 </body>
 </html>
