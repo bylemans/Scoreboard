@@ -254,18 +254,28 @@
         let pausedTime = 900;
         let timerInterval = null;
         let alarmTimeout = null;
-        let audioContext = null;
         let alarmHasFired = false;
-
-        function initAudioContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Create a simple beep sound using HTML5 Audio with actual wave data
+        function createBeepSound() {
+            // This is a simple 440Hz beep encoded as a data URL
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const duration = 0.3;
+            const frequency = 880;
+            
+            const sampleRate = audioContext.sampleRate;
+            const numSamples = duration * sampleRate;
+            const buffer = audioContext.createBuffer(1, numSamples, sampleRate);
+            const channel = buffer.getChannelData(0);
+            
+            for (let i = 0; i < numSamples; i++) {
+                channel[i] = Math.sin(2 * Math.PI * frequency * i / sampleRate) * 0.5;
             }
-            if (audioContext.state === 'suspended') {
-                return audioContext.resume();
-            }
-            return Promise.resolve();
+            
+            return buffer;
         }
+        
+        let beepBuffer = null;
 
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
@@ -274,54 +284,61 @@
         }
 
         function playAlarm() {
-            try {
-                // Initialize audio context if needed
-                if (!audioContext) {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
-                
-                // Vibrate the device
-                if (navigator.vibrate) {
-                    navigator.vibrate([400, 200, 400, 200, 400]);
-                }
-                
-                // Play 5 loud beeps
-                for (let i = 0; i < 5; i++) {
-                    setTimeout(() => {
-                        const osc = audioContext.createOscillator();
-                        const gain = audioContext.createGain();
-                        
-                        osc.connect(gain);
-                        gain.connect(audioContext.destination);
-                        
-                        // Higher frequency for louder, more noticeable sound
-                        osc.frequency.value = 1000;
-                        osc.type = 'square';
-                        
-                        const now = audioContext.currentTime;
-                        gain.gain.setValueAtTime(1, now); // Maximum volume
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                        
-                        osc.start(now);
-                        osc.stop(now + 0.5);
-                    }, i * 600);
-                }
-                
-                console.log('Alarm triggered at:', new Date().toLocaleTimeString());
-            } catch (e) {
-                console.error('Alarm error:', e);
-                // Fallback: try HTML5 audio
-                try {
-                    const beep = new Audio('data:audio/wav;base64,UklGRhYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQIAAAD//w==');
-                    beep.volume = 1.0;
-                    beep.play();
-                } catch (e2) {
-                    console.error('Fallback audio failed:', e2);
-                }
+            console.log('🔔 Alarm triggered at:', new Date().toLocaleTimeString());
+            
+            // Vibrate
+            if (navigator.vibrate) {
+                navigator.vibrate([500, 200, 500, 200, 500, 200, 500]);
             }
+            
+            // Try multiple methods to ensure sound plays
+            const methods = [
+                // Method 1: Web Audio API
+                () => {
+                    try {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        
+                        for (let i = 0; i < 5; i++) {
+                            setTimeout(() => {
+                                const oscillator = audioContext.createOscillator();
+                                const gainNode = audioContext.createGain();
+                                
+                                oscillator.connect(gainNode);
+                                gainNode.connect(audioContext.destination);
+                                
+                                oscillator.frequency.value = 880;
+                                oscillator.type = 'sine';
+                                
+                                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+                                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                                
+                                oscillator.start();
+                                oscillator.stop(audioContext.currentTime + 0.3);
+                                
+                                console.log('Beep', i + 1);
+                            }, i * 500);
+                        }
+                    } catch (e) {
+                        console.error('Web Audio failed:', e);
+                    }
+                },
+                
+                // Method 2: Speech Synthesis as fallback
+                () => {
+                    try {
+                        const utterance = new SpeechSynthesisUtterance('Beep beep beep');
+                        utterance.rate = 2;
+                        utterance.pitch = 2;
+                        window.speechSynthesis.speak(utterance);
+                        console.log('Speech synthesis used');
+                    } catch (e) {
+                        console.error('Speech synthesis failed:', e);
+                    }
+                }
+            ];
+            
+            // Try all methods
+            methods.forEach(method => method());
         }
 
         function updateTimer() {
@@ -377,36 +394,30 @@
                 }
             } else {
                 isRunning = true;
+                alarmHasFired = false;
                 btn.textContent = '⏸ Pause';
                 startTimestamp = Date.now();
                 pausedTime = timeRemaining;
                 timerInterval = setInterval(updateTimer, 100);
                 
-                // Initialize audio context on user interaction
-                try {
-                    if (!audioContext) {
-                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    }
-                    if (audioContext.state === 'suspended') {
-                        audioContext.resume();
-                    }
-                } catch (e) {
-                    console.log('Audio context init:', e);
-                }
-                
                 // Schedule alarm to trigger exactly at zero
                 if (timeRemaining > 0) {
                     if (alarmTimeout) clearTimeout(alarmTimeout);
+                    const alarmTime = timeRemaining * 1000;
+                    console.log('⏰ Scheduling alarm in', timeRemaining, 'seconds');
                     alarmTimeout = setTimeout(() => {
-                        console.log('Alarm timeout fired');
-                        playAlarm();
-                        isRunning = false;
-                        btn.textContent = '▶ Play';
-                        if (timerInterval) clearInterval(timerInterval);
-                        timeRemaining = 0;
-                        updateDisplay();
-                    }, timeRemaining * 1000);
-                    console.log('Alarm scheduled for', timeRemaining, 'seconds');
+                        console.log('⏰ Alarm timeout fired!');
+                        if (!alarmHasFired) {
+                            alarmHasFired = true;
+                            playAlarm();
+                            isRunning = false;
+                            btn.textContent = '▶ Play';
+                            if (timerInterval) clearInterval(timerInterval);
+                            timeRemaining = 0;
+                            pausedTime = 0;
+                            updateDisplay();
+                        }
+                    }, alarmTime);
                 }
             }
         }
@@ -418,6 +429,7 @@
             pausedTime = 900;
             isRunning = false;
             startTimestamp = null;
+            alarmHasFired = false;
             if (timerInterval) clearInterval(timerInterval);
             if (alarmTimeout) {
                 clearTimeout(alarmTimeout);
@@ -425,6 +437,11 @@
             }
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
+        });
+        
+        document.getElementById('testAlarm').addEventListener('click', () => {
+            console.log('🔔 Test alarm button clicked');
+            playAlarm();
         });
 
         document.getElementById('nextQuarter').addEventListener('click', () => {
@@ -434,6 +451,7 @@
                 pausedTime = 900;
                 isRunning = false;
                 startTimestamp = null;
+                alarmHasFired = false;
                 if (timerInterval) clearInterval(timerInterval);
                 if (alarmTimeout) {
                     clearTimeout(alarmTimeout);
@@ -452,6 +470,7 @@
             pausedTime = 900;
             isRunning = false;
             startTimestamp = null;
+            alarmHasFired = false;
             if (timerInterval) clearInterval(timerInterval);
             if (alarmTimeout) {
                 clearTimeout(alarmTimeout);
