@@ -213,6 +213,7 @@
                 <button class="play-pause" id="playPause">▶ Play</button>
                 <button class="reset-timer" id="resetTimer">↻ Reset</button>
                 <button class="next-quarter" id="nextQuarter">Next Quarter</button>
+                <button class="reset-timer" id="testAlarm">🔔 Test Alarm</button>
             </div>
         </div>
 
@@ -254,6 +255,17 @@
         let timerInterval = null;
         let alarmTimeout = null;
         let audioContext = null;
+        let alarmHasFired = false;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                return audioContext.resume();
+            }
+            return Promise.resolve();
+        }
 
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
@@ -263,6 +275,7 @@
 
         function playAlarm() {
             try {
+                // Initialize audio context if needed
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
@@ -270,27 +283,44 @@
                     audioContext.resume();
                 }
                 
+                // Vibrate the device
                 if (navigator.vibrate) {
-                    navigator.vibrate([300, 150, 300, 150, 300]);
+                    navigator.vibrate([400, 200, 400, 200, 400]);
                 }
                 
-                for (let i = 0; i < 3; i++) {
+                // Play 5 loud beeps
+                for (let i = 0; i < 5; i++) {
                     setTimeout(() => {
                         const osc = audioContext.createOscillator();
                         const gain = audioContext.createGain();
+                        
                         osc.connect(gain);
                         gain.connect(audioContext.destination);
-                        osc.frequency.value = 880;
+                        
+                        // Higher frequency for louder, more noticeable sound
+                        osc.frequency.value = 1000;
                         osc.type = 'square';
+                        
                         const now = audioContext.currentTime;
-                        gain.gain.setValueAtTime(0.3, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                        gain.gain.setValueAtTime(1, now); // Maximum volume
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                        
                         osc.start(now);
-                        osc.stop(now + 0.4);
-                    }, i * 500);
+                        osc.stop(now + 0.5);
+                    }, i * 600);
                 }
+                
+                console.log('Alarm triggered at:', new Date().toLocaleTimeString());
             } catch (e) {
-                console.log('Audio error:', e);
+                console.error('Alarm error:', e);
+                // Fallback: try HTML5 audio
+                try {
+                    const beep = new Audio('data:audio/wav;base64,UklGRhYAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQIAAAD//w==');
+                    beep.volume = 1.0;
+                    beep.play();
+                } catch (e2) {
+                    console.error('Fallback audio failed:', e2);
+                }
             }
         }
 
@@ -352,15 +382,31 @@
                 pausedTime = timeRemaining;
                 timerInterval = setInterval(updateTimer, 100);
                 
-                // Schedule alarm
+                // Initialize audio context on user interaction
+                try {
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                } catch (e) {
+                    console.log('Audio context init:', e);
+                }
+                
+                // Schedule alarm to trigger exactly at zero
                 if (timeRemaining > 0) {
+                    if (alarmTimeout) clearTimeout(alarmTimeout);
                     alarmTimeout = setTimeout(() => {
+                        console.log('Alarm timeout fired');
                         playAlarm();
                         isRunning = false;
                         btn.textContent = '▶ Play';
                         if (timerInterval) clearInterval(timerInterval);
+                        timeRemaining = 0;
                         updateDisplay();
                     }, timeRemaining * 1000);
+                    console.log('Alarm scheduled for', timeRemaining, 'seconds');
                 }
             }
         }
