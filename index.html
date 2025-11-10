@@ -257,6 +257,19 @@
         let alarmHasFired = false;
         let audioContext = null;
         let unlocked = false;
+        let notificationPermission = false;
+        
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().then(permission => {
+                notificationPermission = (permission === 'granted');
+                if (notificationPermission) {
+                    console.log('✅ Notifications enabled');
+                }
+            });
+        } else if ('Notification' in window && Notification.permission === 'granted') {
+            notificationPermission = true;
+        }
 
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
@@ -295,11 +308,33 @@
         function playAlarm() {
             console.log('🔔 Alarm triggered at:', new Date().toLocaleTimeString());
             
-            // Vibrate
-            if (navigator.vibrate) {
-                navigator.vibrate([500, 200, 500, 200, 500, 200, 500]);
+            // Send notification (works even with screen off on Android)
+            if (notificationPermission && 'Notification' in window) {
+                try {
+                    const notification = new Notification('⚽ Scoreboard - Time\'s Up!', {
+                        body: 'Quarter ended! Timer reached 0:00',
+                        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjI1NiIgZmlsbD0iIzFmMjkzNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjMwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuKalzwvdGV4dD48L3N2Zz4=',
+                        tag: 'scoreboard-alarm',
+                        requireInteraction: true,
+                        vibrate: [500, 200, 500, 200, 500]
+                    });
+                    
+                    // Auto-close after 30 seconds
+                    setTimeout(() => notification.close(), 30000);
+                    
+                    console.log('📱 Notification sent');
+                } catch (e) {
+                    console.error('Notification error:', e);
+                }
             }
             
+            // Vibrate (works even with screen off)
+            if (navigator.vibrate) {
+                navigator.vibrate([500, 200, 500, 200, 500, 200, 500]);
+                console.log('📳 Vibration triggered');
+            }
+            
+            // Try audio (may not work if screen is off)
             try {
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -335,7 +370,7 @@
                     }, i * 500);
                 }
                 
-                // Also try speech synthesis for mobile
+                // Speech synthesis
                 if (window.speechSynthesis) {
                     setTimeout(() => {
                         const utterance = new SpeechSynthesisUtterance('Time is up');
@@ -346,7 +381,7 @@
                     }, 100);
                 }
             } catch (e) {
-                console.error('Alarm error:', e);
+                console.error('Audio error:', e);
             }
         }
 
