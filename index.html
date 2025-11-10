@@ -255,27 +255,8 @@
         let timerInterval = null;
         let alarmTimeout = null;
         let alarmHasFired = false;
-        
-        // Create a simple beep sound using HTML5 Audio with actual wave data
-        function createBeepSound() {
-            // This is a simple 440Hz beep encoded as a data URL
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const duration = 0.3;
-            const frequency = 880;
-            
-            const sampleRate = audioContext.sampleRate;
-            const numSamples = duration * sampleRate;
-            const buffer = audioContext.createBuffer(1, numSamples, sampleRate);
-            const channel = buffer.getChannelData(0);
-            
-            for (let i = 0; i < numSamples; i++) {
-                channel[i] = Math.sin(2 * Math.PI * frequency * i / sampleRate) * 0.5;
-            }
-            
-            return buffer;
-        }
-        
-        let beepBuffer = null;
+        let audioContext = null;
+        let unlocked = false;
 
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
@@ -283,6 +264,34 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
+        function unlockAudio() {
+            if (unlocked) return;
+            
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // Create a silent sound to unlock audio on mobile
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = 0; // Silent
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.start(0);
+                oscillator.stop(0.001);
+                
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                unlocked = true;
+                console.log('✅ Audio unlocked for mobile');
+            } catch (e) {
+                console.error('Audio unlock failed:', e);
+            }
+        }
+        
         function playAlarm() {
             console.log('🔔 Alarm triggered at:', new Date().toLocaleTimeString());
             
@@ -291,54 +300,54 @@
                 navigator.vibrate([500, 200, 500, 200, 500, 200, 500]);
             }
             
-            // Try multiple methods to ensure sound plays
-            const methods = [
-                // Method 1: Web Audio API
-                () => {
-                    try {
-                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        
-                        for (let i = 0; i < 5; i++) {
-                            setTimeout(() => {
-                                const oscillator = audioContext.createOscillator();
-                                const gainNode = audioContext.createGain();
-                                
-                                oscillator.connect(gainNode);
-                                gainNode.connect(audioContext.destination);
-                                
-                                oscillator.frequency.value = 880;
-                                oscillator.type = 'sine';
-                                
-                                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-                                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                                
-                                oscillator.start();
-                                oscillator.stop(audioContext.currentTime + 0.3);
-                                
-                                console.log('Beep', i + 1);
-                            }, i * 500);
-                        }
-                    } catch (e) {
-                        console.error('Web Audio failed:', e);
-                    }
-                },
-                
-                // Method 2: Speech Synthesis as fallback
-                () => {
-                    try {
-                        const utterance = new SpeechSynthesisUtterance('Beep beep beep');
-                        utterance.rate = 2;
-                        utterance.pitch = 2;
-                        window.speechSynthesis.speak(utterance);
-                        console.log('Speech synthesis used');
-                    } catch (e) {
-                        console.error('Speech synthesis failed:', e);
-                    }
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
-            ];
-            
-            // Try all methods
-            methods.forEach(method => method());
+                
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Play 5 beeps
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        try {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            
+                            oscillator.frequency.value = 880;
+                            oscillator.type = 'sine';
+                            
+                            gainNode.gain.setValueAtTime(0.8, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                            
+                            oscillator.start();
+                            oscillator.stop(audioContext.currentTime + 0.3);
+                            
+                            console.log('🔊 Beep', i + 1);
+                        } catch (e) {
+                            console.error('Beep error:', e);
+                        }
+                    }, i * 500);
+                }
+                
+                // Also try speech synthesis for mobile
+                if (window.speechSynthesis) {
+                    setTimeout(() => {
+                        const utterance = new SpeechSynthesisUtterance('Time is up');
+                        utterance.rate = 1.5;
+                        utterance.pitch = 1.5;
+                        window.speechSynthesis.speak(utterance);
+                        console.log('🗣️ Speech synthesis');
+                    }, 100);
+                }
+            } catch (e) {
+                console.error('Alarm error:', e);
+            }
         }
 
         function updateTimer() {
@@ -393,6 +402,9 @@
                     alarmTimeout = null;
                 }
             } else {
+                // Unlock audio on mobile when user presses Play
+                unlockAudio();
+                
                 isRunning = true;
                 alarmHasFired = false;
                 btn.textContent = '⏸ Pause';
@@ -441,6 +453,7 @@
         
         document.getElementById('testAlarm').addEventListener('click', () => {
             console.log('🔔 Test alarm button clicked');
+            unlockAudio();
             playAlarm();
         });
 
