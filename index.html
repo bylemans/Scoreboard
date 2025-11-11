@@ -89,6 +89,9 @@
         .btn-reset {
             background: #ef4444;
             color: white;
+            width: 100%;
+            margin-top: 0.75rem;
+            justify-content: center;
         }
         .teams {
             display: grid;
@@ -202,6 +205,7 @@
             font-size: 0.625rem;
             color: #9ca3af;
             margin-bottom: 0.25rem;
+            font-weight: bold;
         }
         .quarter-box.active .quarter-box-label {
             color: #000;
@@ -244,7 +248,6 @@
             <div class="timer-controls">
                 <button class="btn btn-play" id="playPause">▶ Play</button>
                 <button class="btn btn-next" id="nextQuarter">▶| Next</button>
-                <button class="btn btn-reset" id="resetTimer">↻ Reset</button>
             </div>
         </div>
 
@@ -272,6 +275,8 @@
             <div class="breakdown-title">Quarter Breakdown</div>
             <div class="quarters-grid" id="quartersGrid"></div>
         </div>
+
+        <button class="btn btn-reset" id="resetTimer">↻ Reset Game</button>
 
         <div class="signature">tby.be</div>
     </div>
@@ -475,26 +480,22 @@
         document.getElementById('playPause').addEventListener('click', toggleTimer);
         
         document.getElementById('resetTimer').addEventListener('click', () => {
-            const confirmed = confirm('⚠️ RESET ENTIRE GAME?\n\nThis will:\n• Reset all scores to 0\n• Reset timer to 15:00\n• Return to Quarter 1\n\nAre you sure?');
-            
-            if (confirmed) {
-                // Reset everything
-                homeScore = [0, 0, 0, 0];
-                awayScore = [0, 0, 0, 0];
-                currentQuarter = 0;
-                timeRemaining = 900;
-                pausedTime = 900;
-                isRunning = false;
-                startTimestamp = null;
-                alarmHasFired = false;
-                if (timerInterval) clearInterval(timerInterval);
-                if (alarmTimeout) {
-                    clearTimeout(alarmTimeout);
-                    alarmTimeout = null;
-                }
-                document.getElementById('playPause').textContent = '▶ Play';
-                updateDisplay();
+            // Reset everything
+            homeScore = [0, 0, 0, 0];
+            awayScore = [0, 0, 0, 0];
+            currentQuarter = 0;
+            timeRemaining = 900;
+            pausedTime = 900;
+            isRunning = false;
+            startTimestamp = null;
+            alarmHasFired = false;
+            if (timerInterval) clearInterval(timerInterval);
+            if (alarmTimeout) {
+                clearTimeout(alarmTimeout);
+                alarmTimeout = null;
             }
+            document.getElementById('playPause').textContent = '▶ Play';
+            updateDisplay();
         });
 
         document.getElementById('nextQuarter').addEventListener('click', () => {
