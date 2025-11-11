@@ -104,7 +104,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.75rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             flex-shrink: 0;
         }
         .team {
@@ -186,7 +186,12 @@
             background: #0f3d2f;
             border-radius: 1rem;
             padding: 1rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+        .reset-container {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
             flex-shrink: 0;
         }
         .breakdown-title {
@@ -285,7 +290,9 @@
             <div class="quarters-grid" id="quartersGrid"></div>
         </div>
 
-        <button class="btn btn-reset" id="resetTimer">↻ Reset Game</button>
+        <div class="reset-container">
+            <button class="btn btn-reset" id="resetTimer">↻ Reset Game</button>
+        </div>
 
         <div class="signature">tby.be</div>
     </div>
