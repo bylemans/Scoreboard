@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0a1f1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Scoreboard</title>
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNjb3JlYm9hcmQiLAogICJzaG9ydF9uYW1lIjogIlNjb3JlYm9hcmQiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwZjE3MmEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSTFNVEVPSUJ0zVXpGUWVDZGZRZ0k1bk5yWlhSamFFWGxiR3dnYm201bGNTZ1lURWdNRG9nTUM0d01EQXdJREF1TURBd01DQXlOUzR1TlRZd05TQXRNVEF1TlRNd09TZDBiM0lnYm05elpWY3Jad1lTWCtaZjFwL1dYOWFEMGpCeUQwdWNPOFNkT0FQZDlKVnRYcXJ5dVp0YUhEc25WdzVPM1V3YzBWd2R6RXdJSE4wYjJ0bExYZHBaSFJvT2pNeElITjBjbTlyWlMxc2FXNWxZMkZ3T2pac2FXNWxPMlpwYkd3NmNtZGlLREkxTlN3eU5UVXNNalUxS1NJdlBqd3ZjM1puUGc9PSIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNjb3JlYm9hcmQiLAogICJzaG9ydF9uYW1lIjogIlNjb3JlYm9hcmQiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBhMWYxYSIsCiAgInRoZW1lX2NvbG9yIjogIiMwYTFmMWEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSTFNVEVPSUJ0zVXzGUWVDZGZRZ0k1bk5yWlhSamFFWGxiR3dnYm201bGNTZ1lURWdNRG9nTUM0d01EQXdJREF1TURBd01DQXlOUzR1TlRZd05TQXRNVEF1TlRNd09TZDBiM0lnYm05elpWY3Jad1lTWCtaZjFwL1dYOWFEMGpCeUQwdWNPOFNkT0FQZDlKVnRYcXJ5dVp0YUhEc25WdzVPM1V3YzBWd2R6RXdJSE4wYjJ0bExYZHBaSFJvT2pNeElITjBjbTlyWlMxc2FXNWxZMkZ3T2pac2FXNWxPMlpwYkd3NmNtZGlLREkxTlN3eU5UVXNNalUxS1NJdlBqd3ZjM1puUGc9PSIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
     <style>
         * {
             margin: 0;
@@ -16,231 +16,253 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
-            height: 100vh;
-            padding: 0.5rem;
+            background: #0a1f1a;
+            min-height: 100vh;
             color: white;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            padding: 1rem;
         }
         .container {
-            max-width: 1200px;
+            max-width: 500px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
         }
-        h1 {
+        .header {
             text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
         }
-        h1::before {
-            content: '⚽';
+        .header h1 {
             font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
         }
         .timer-section {
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(10px);
-            border-radius: 0.75rem;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            text-align: center;
-            flex-shrink: 0;
+            background: #0f3d2f;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-        .quarter {
+        .quarter-label {
+            text-align: center;
             color: #9ca3af;
-            font-size: 0.75rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
         }
         .timer {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: bold;
+            text-align: center;
             font-family: 'Courier New', monospace;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.1em;
         }
         .timer-controls {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
             justify-content: center;
-            flex-wrap: wrap;
         }
-        button {
-            padding: 0.5rem 1rem;
+        .btn {
+            padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 0.5rem;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 0.875rem;
-            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
         }
-        button:active {
+        .btn:active {
             transform: scale(0.95);
         }
-        .play-pause {
-            background: #16a34a;
+        .btn-play {
+            background: #f59e0b;
+            color: #000;
         }
-        .play-pause:hover {
-            background: #15803d;
+        .btn-next {
+            background: #10b981;
+            color: white;
         }
-        .reset-timer {
-            background: #2563eb;
-        }
-        .reset-timer:hover {
-            background: #1d4ed8;
-        }
-        .next-quarter {
-            background: #9333ea;
-        }
-        .next-quarter:hover {
-            background: #7e22ce;
-        }
-        .next-quarter:disabled {
-            background: #4b5563;
-            cursor: not-allowed;
+        .btn-reset {
+            background: #ef4444;
+            color: white;
         }
         .teams {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            flex: 1;
-            min-height: 0;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
         .team {
-            border-radius: 0.75rem;
-            padding: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
+            border: 3px solid;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            background: #0a1f1a;
         }
-        .home {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        .team.home {
+            border-color: #ef4444;
         }
-        .away {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        .team.away {
+            border-color: #3b82f6;
         }
         .team-name {
-            width: 100%;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: white;
-            font-size: 1.25rem;
-            font-weight: bold;
             text-align: center;
-            padding: 0.4rem;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
+            color: #9ca3af;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .team-score {
-            font-size: 3rem;
+            font-size: 5rem;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 0.5rem;
-            flex-shrink: 0;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
         }
-        .quarters {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.25rem;
-            margin-bottom: 0.5rem;
-            flex-shrink: 0;
+        .team.home .team-score {
+            color: #ef4444;
         }
-        .quarter-box {
-            background: rgba(255,255,255,0.1);
-            padding: 0.25rem;
-            border-radius: 0.5rem;
-            text-align: center;
-        }
-        .quarter-box.active {
-            background: rgba(255,255,255,0.3);
-        }
-        .quarter-label {
-            font-size: 0.625rem;
-            color: rgba(255,255,255,0.7);
-        }
-        .quarter-score {
-            font-size: 1rem;
-            font-weight: bold;
+        .team.away .team-score {
+            color: #3b82f6;
         }
         .score-buttons {
             display: flex;
             gap: 0.5rem;
-            margin-top: auto;
         }
         .score-btn {
             flex: 1;
-            background: rgba(255,255,255,0.2);
-            padding: 0.6rem;
-        }
-        .score-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        .reset-game {
-            width: 100%;
-            background: #16a34a;
             padding: 0.75rem;
-            font-size: 1rem;
-            flex-shrink: 0;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .reset-game:hover {
-            background: #15803d;
+        .score-btn:active {
+            transform: scale(0.95);
+        }
+        .team.home .score-btn.minus {
+            background: #1f2937;
+            color: white;
+        }
+        .team.home .score-btn.plus {
+            background: #ef4444;
+            color: white;
+        }
+        .team.away .score-btn.minus {
+            background: #1f2937;
+            color: white;
+        }
+        .team.away .score-btn.plus {
+            background: #3b82f6;
+            color: white;
+        }
+        .breakdown {
+            background: #0f3d2f;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .breakdown-title {
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .quarters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+        .quarter-box {
+            background: #1a4d3a;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+        }
+        .quarter-box.active {
+            background: #22c55e;
+        }
+        .quarter-box-label {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+        .quarter-box.active .quarter-box-label {
+            color: #000;
+        }
+        .quarter-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .quarter-score {
+            font-size: 1.125rem;
+            font-weight: bold;
+        }
+        .quarter-score.home {
+            color: #ef4444;
+        }
+        .quarter-score.away {
+            color: #3b82f6;
+        }
+        .quarter-box.active .quarter-score {
+            color: #000;
         }
         .signature {
             text-align: center;
-            margin-top: 0.25rem;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.3);
             font-size: 0.75rem;
-            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Scoreboard</h1>
+        <div class="header">
+            <span style="font-size: 1.5rem;">⚽</span>
+            <h1>Scoreboard APP</h1>
+        </div>
         
         <div class="timer-section">
-            <div class="quarter">Quarter <span id="currentQuarter">1</span></div>
+            <div class="quarter-label">Quarter <span id="currentQuarter">1</span> / 4</div>
             <div class="timer" id="timer">15:00</div>
             <div class="timer-controls">
-                <button class="play-pause" id="playPause">▶ Play</button>
-                <button class="reset-timer" id="resetTimer">↻ Reset</button>
-                <button class="next-quarter" id="nextQuarter">Next Quarter</button>
-                <button class="reset-timer" id="testAlarm">🔔 Test Alarm</button>
+                <button class="btn btn-play" id="playPause">▶ Play</button>
+                <button class="btn btn-next" id="nextQuarter">▶| Next</button>
+                <button class="btn btn-reset" id="resetTimer">↻ Reset</button>
             </div>
         </div>
 
         <div class="teams">
             <div class="team home">
-                <input type="text" class="team-name" id="homeName" value="Home">
+                <div class="team-name">HOME</div>
                 <div class="team-score" id="homeTotal">0</div>
-                <div class="quarters" id="homeQuarters"></div>
                 <div class="score-buttons">
-                    <button class="score-btn" onclick="addScore('home', 1)">+1 Goal</button>
-                    <button class="score-btn" onclick="addScore('home', -1)">-1</button>
+                    <button class="score-btn minus" onclick="addScore('home', -1)">−</button>
+                    <button class="score-btn plus" onclick="addScore('home', 1)">+</button>
                 </div>
             </div>
 
             <div class="team away">
-                <input type="text" class="team-name" id="awayName" value="Away">
+                <div class="team-name">AWAY</div>
                 <div class="team-score" id="awayTotal">0</div>
-                <div class="quarters" id="awayQuarters"></div>
                 <div class="score-buttons">
-                    <button class="score-btn" onclick="addScore('away', 1)">+1 Goal</button>
-                    <button class="score-btn" onclick="addScore('away', -1)">-1</button>
+                    <button class="score-btn minus" onclick="addScore('away', -1)">−</button>
+                    <button class="score-btn plus" onclick="addScore('away', 1)">+</button>
                 </div>
             </div>
         </div>
 
-        <button class="reset-game" id="resetGame">↻ Reset Game</button>
-        
+        <div class="breakdown">
+            <div class="breakdown-title">Quarter Breakdown</div>
+            <div class="quarters-grid" id="quartersGrid"></div>
+        </div>
+
         <div class="signature">tby.be</div>
     </div>
 
@@ -259,13 +281,9 @@
         let unlocked = false;
         let notificationPermission = false;
         
-        // Request notification permission
         if ('Notification' in window && Notification.permission === 'default') {
             Notification.requestPermission().then(permission => {
                 notificationPermission = (permission === 'granted');
-                if (notificationPermission) {
-                    console.log('✅ Notifications enabled');
-                }
             });
         } else if ('Notification' in window && Notification.permission === 'granted') {
             notificationPermission = true;
@@ -279,110 +297,88 @@
 
         function unlockAudio() {
             if (unlocked) return;
-            
             try {
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
-                
-                // Create a silent sound to unlock audio on mobile
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
-                gainNode.gain.value = 0; // Silent
+                gainNode.gain.value = 0;
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
                 oscillator.start(0);
                 oscillator.stop(0.001);
-                
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
-                
                 unlocked = true;
-                console.log('✅ Audio unlocked for mobile');
-            } catch (e) {
-                console.error('Audio unlock failed:', e);
-            }
+            } catch (e) {}
         }
-        
+
         function playAlarm() {
-            console.log('🔔 Alarm triggered at:', new Date().toLocaleTimeString());
+            console.log('🔔 Alarm triggered');
             
-            // Send notification (works even with screen off on Android)
-            if (notificationPermission && 'Notification' in window) {
-                try {
-                    const notification = new Notification('⚽ Scoreboard - Time\'s Up!', {
-                        body: 'Quarter ended! Timer reached 0:00',
-                        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjI1NiIgZmlsbD0iIzFmMjkzNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjMwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuKalzwvdGV4dD48L3N2Zz4=',
-                        tag: 'scoreboard-alarm',
-                        requireInteraction: true,
-                        vibrate: [500, 200, 500, 200, 500]
-                    });
-                    
-                    // Auto-close after 30 seconds
-                    setTimeout(() => notification.close(), 30000);
-                    
-                    console.log('📱 Notification sent');
-                } catch (e) {
-                    console.error('Notification error:', e);
-                }
-            }
-            
-            // Vibrate (works even with screen off)
             if (navigator.vibrate) {
-                navigator.vibrate([500, 200, 500, 200, 500, 200, 500]);
-                console.log('📳 Vibration triggered');
+                navigator.vibrate([1000, 300, 1000, 300, 1000, 500]);
+                setTimeout(() => {
+                    if (navigator.vibrate) {
+                        navigator.vibrate([800, 200, 800, 200, 800, 200, 800, 500]);
+                    }
+                }, 2500);
+                setTimeout(() => {
+                    if (navigator.vibrate) {
+                        navigator.vibrate([1000, 300, 1000, 300, 1000]);
+                    }
+                }, 5500);
             }
             
-            // Try audio (may not work if screen is off)
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    const notification = new Notification('⚽ TIME IS UP!', {
+                        body: `Quarter ${currentQuarter + 1} has ended!\nTimer: 0:00`,
+                        requireInteraction: true,
+                        vibrate: [1000, 300, 1000, 300, 1000],
+                    });
+                    notification.onclick = function() {
+                        window.focus();
+                        this.close();
+                    };
+                } catch (e) {}
+            }
+            
             try {
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
-                
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
                 
-                // Play 5 beeps
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 7; i++) {
                     setTimeout(() => {
                         try {
-                            const oscillator = audioContext.createOscillator();
-                            const gainNode = audioContext.createGain();
-                            
-                            oscillator.connect(gainNode);
-                            gainNode.connect(audioContext.destination);
-                            
-                            oscillator.frequency.value = 880;
-                            oscillator.type = 'sine';
-                            
-                            gainNode.gain.setValueAtTime(0.8, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                            
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.3);
-                            
-                            console.log('🔊 Beep', i + 1);
-                        } catch (e) {
-                            console.error('Beep error:', e);
-                        }
-                    }, i * 500);
+                            const osc = audioContext.createOscillator();
+                            const gain = audioContext.createGain();
+                            osc.connect(gain);
+                            gain.connect(audioContext.destination);
+                            osc.frequency.value = 1000;
+                            osc.type = 'square';
+                            gain.gain.setValueAtTime(1.0, audioContext.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                            osc.start();
+                            osc.stop(audioContext.currentTime + 0.5);
+                        } catch (e) {}
+                    }, i * 600);
                 }
                 
-                // Speech synthesis
                 if (window.speechSynthesis) {
                     setTimeout(() => {
-                        const utterance = new SpeechSynthesisUtterance('Time is up');
-                        utterance.rate = 1.5;
-                        utterance.pitch = 1.5;
+                        const utterance = new SpeechSynthesisUtterance('Time is up! Quarter ended!');
+                        utterance.volume = 1.0;
                         window.speechSynthesis.speak(utterance);
-                        console.log('🗣️ Speech synthesis');
-                    }, 100);
+                    }, 200);
                 }
-            } catch (e) {
-                console.error('Audio error:', e);
-            }
+            } catch (e) {}
         }
 
         function updateTimer() {
@@ -398,21 +394,25 @@
             document.getElementById('currentQuarter').textContent = currentQuarter + 1;
             document.getElementById('homeTotal').textContent = homeScore.reduce((a, b) => a + b, 0);
             document.getElementById('awayTotal').textContent = awayScore.reduce((a, b) => a + b, 0);
-            
-            renderQuarters('homeQuarters', homeScore);
-            renderQuarters('awayQuarters', awayScore);
-            
+            renderQuarters();
             document.getElementById('nextQuarter').disabled = currentQuarter === 3;
         }
 
-        function renderQuarters(id, scores) {
-            const container = document.getElementById(id);
-            container.innerHTML = scores.map((score, i) => `
-                <div class="quarter-box ${i === currentQuarter ? 'active' : ''}">
-                    <div class="quarter-label">Q${i + 1}</div>
-                    <div class="quarter-score">${score}</div>
-                </div>
-            `).join('');
+        function renderQuarters() {
+            const container = document.getElementById('quartersGrid');
+            container.innerHTML = '';
+            for (let i = 0; i < 4; i++) {
+                const box = document.createElement('div');
+                box.className = `quarter-box ${i === currentQuarter ? 'active' : ''}`;
+                box.innerHTML = `
+                    <div class="quarter-box-label">Q${i + 1}</div>
+                    <div class="quarter-scores">
+                        <div class="quarter-score home">${homeScore[i]}</div>
+                        <div class="quarter-score away">${awayScore[i]}</div>
+                    </div>
+                `;
+                container.appendChild(box);
+            }
         }
 
         function addScore(team, points) {
@@ -426,7 +426,6 @@
 
         function toggleTimer() {
             const btn = document.getElementById('playPause');
-            
             if (isRunning) {
                 isRunning = false;
                 btn.textContent = '▶ Play';
@@ -437,9 +436,7 @@
                     alarmTimeout = null;
                 }
             } else {
-                // Unlock audio on mobile when user presses Play
                 unlockAudio();
-                
                 isRunning = true;
                 alarmHasFired = false;
                 btn.textContent = '⏸ Pause';
@@ -447,13 +444,9 @@
                 pausedTime = timeRemaining;
                 timerInterval = setInterval(updateTimer, 100);
                 
-                // Schedule alarm to trigger exactly at zero
                 if (timeRemaining > 0) {
                     if (alarmTimeout) clearTimeout(alarmTimeout);
-                    const alarmTime = timeRemaining * 1000;
-                    console.log('⏰ Scheduling alarm in', timeRemaining, 'seconds');
                     alarmTimeout = setTimeout(() => {
-                        console.log('⏰ Alarm timeout fired!');
                         if (!alarmHasFired) {
                             alarmHasFired = true;
                             playAlarm();
@@ -464,7 +457,7 @@
                             pausedTime = 0;
                             updateDisplay();
                         }
-                    }, alarmTime);
+                    }, timeRemaining * 1000);
                 }
             }
         }
@@ -485,12 +478,6 @@
             document.getElementById('playPause').textContent = '▶ Play';
             updateDisplay();
         });
-        
-        document.getElementById('testAlarm').addEventListener('click', () => {
-            console.log('🔔 Test alarm button clicked');
-            unlockAudio();
-            playAlarm();
-        });
 
         document.getElementById('nextQuarter').addEventListener('click', () => {
             if (currentQuarter < 3) {
@@ -508,24 +495,6 @@
                 document.getElementById('playPause').textContent = '▶ Play';
                 updateDisplay();
             }
-        });
-
-        document.getElementById('resetGame').addEventListener('click', () => {
-            homeScore = [0, 0, 0, 0];
-            awayScore = [0, 0, 0, 0];
-            currentQuarter = 0;
-            timeRemaining = 900;
-            pausedTime = 900;
-            isRunning = false;
-            startTimestamp = null;
-            alarmHasFired = false;
-            if (timerInterval) clearInterval(timerInterval);
-            if (alarmTimeout) {
-                clearTimeout(alarmTimeout);
-                alarmTimeout = null;
-            }
-            document.getElementById('playPause').textContent = '▶ Play';
-            updateDisplay();
         });
 
         document.addEventListener('visibilitychange', () => {
