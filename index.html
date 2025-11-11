@@ -41,35 +41,35 @@
         .timer-section {
             background: #0f3d2f;
             border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
         .quarter-label {
             text-align: center;
             color: #9ca3af;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.75rem;
         }
         .timer {
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: bold;
             text-align: center;
             font-family: 'Courier New', monospace;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             letter-spacing: 0.1em;
         }
         .timer-controls {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             justify-content: center;
         }
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.6rem 1rem;
             border: none;
             border-radius: 0.5rem;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -93,13 +93,13 @@
         .teams {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
         }
         .team {
             border: 3px solid;
             border-radius: 1rem;
-            padding: 1.5rem;
+            padding: 1rem;
             background: #0a1f1a;
         }
         .team.home {
@@ -109,18 +109,27 @@
             border-color: #3b82f6;
         }
         .team-name {
+            width: 100%;
+            background: transparent;
+            border: none;
             text-align: center;
             color: #9ca3af;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            font-family: inherit;
+            font-weight: 600;
+        }
+        .team-name:focus {
+            outline: 1px solid #9ca3af;
+            border-radius: 0.25rem;
         }
         .team-score {
-            font-size: 5rem;
-            font-weight: bold;
+            font-size: 4rem;
+            font-weight: 900;
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             font-family: 'Courier New', monospace;
         }
         .team.home .team-score {
@@ -135,11 +144,11 @@
         }
         .score-btn {
             flex: 1;
-            padding: 0.75rem;
+            padding: 0.6rem;
             border: none;
             border-radius: 0.5rem;
             font-weight: bold;
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -165,33 +174,34 @@
         .breakdown {
             background: #0f3d2f;
             border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
         }
         .breakdown-title {
             text-align: center;
             color: white;
             font-weight: 600;
-            margin-bottom: 1rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.75rem;
         }
         .quarters-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
         .quarter-box {
             background: #1a4d3a;
-            border-radius: 0.75rem;
-            padding: 1rem;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
             text-align: center;
         }
         .quarter-box.active {
             background: #22c55e;
         }
         .quarter-box-label {
-            font-size: 0.75rem;
+            font-size: 0.625rem;
             color: #9ca3af;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
         .quarter-box.active .quarter-box-label {
             color: #000;
@@ -199,10 +209,10 @@
         .quarter-scores {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.125rem;
         }
         .quarter-score {
-            font-size: 1.125rem;
+            font-size: 0.875rem;
             font-weight: bold;
         }
         .quarter-score.home {
@@ -240,7 +250,7 @@
 
         <div class="teams">
             <div class="team home">
-                <div class="team-name">HOME</div>
+                <input type="text" class="team-name" id="homeName" value="HOME" maxlength="12">
                 <div class="team-score" id="homeTotal">0</div>
                 <div class="score-buttons">
                     <button class="score-btn minus" onclick="addScore('home', -1)">−</button>
@@ -249,7 +259,7 @@
             </div>
 
             <div class="team away">
-                <div class="team-name">AWAY</div>
+                <input type="text" class="team-name" id="awayName" value="AWAY" maxlength="12">
                 <div class="team-score" id="awayTotal">0</div>
                 <div class="score-buttons">
                     <button class="score-btn minus" onclick="addScore('away', -1)">−</button>
@@ -465,18 +475,26 @@
         document.getElementById('playPause').addEventListener('click', toggleTimer);
         
         document.getElementById('resetTimer').addEventListener('click', () => {
-            timeRemaining = 900;
-            pausedTime = 900;
-            isRunning = false;
-            startTimestamp = null;
-            alarmHasFired = false;
-            if (timerInterval) clearInterval(timerInterval);
-            if (alarmTimeout) {
-                clearTimeout(alarmTimeout);
-                alarmTimeout = null;
+            const confirmed = confirm('⚠️ RESET ENTIRE GAME?\n\nThis will:\n• Reset all scores to 0\n• Reset timer to 15:00\n• Return to Quarter 1\n\nAre you sure?');
+            
+            if (confirmed) {
+                // Reset everything
+                homeScore = [0, 0, 0, 0];
+                awayScore = [0, 0, 0, 0];
+                currentQuarter = 0;
+                timeRemaining = 900;
+                pausedTime = 900;
+                isRunning = false;
+                startTimestamp = null;
+                alarmHasFired = false;
+                if (timerInterval) clearInterval(timerInterval);
+                if (alarmTimeout) {
+                    clearTimeout(alarmTimeout);
+                    alarmTimeout = null;
+                }
+                document.getElementById('playPause').textContent = '▶ Play';
+                updateDisplay();
             }
-            document.getElementById('playPause').textContent = '▶ Play';
-            updateDisplay();
         });
 
         document.getElementById('nextQuarter').addEventListener('click', () => {
